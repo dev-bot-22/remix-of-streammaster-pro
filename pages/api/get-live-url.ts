@@ -9,6 +9,9 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { authenticateUser } from "@/utils/authenticateUser";
 import { fetchPaidStream } from "@/lib/paidStream";
 
+// The paid worker often takes 10-15s to answer; allow the function to run long.
+export const maxDuration = 60;
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "GET") {
     return res.status(405).json({ success: false, message: "Method not allowed" });
