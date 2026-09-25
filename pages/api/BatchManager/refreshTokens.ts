@@ -63,7 +63,7 @@ export default async function handler(
       const randomId = uuidv4(); // ✅ Generate randomId
 
       try {
-        const pwApiBase = (process.env.PW_API || "https://api.penpencil.co").replace(/\/$/, "");
+        const pwApiBase = ((process.env.PW_API || "https://api.penpencil.co")).replace(/\/$/, "");
         const response = await fetch(
           `${pwApiBase}/v3/oauth/refresh-token`,
           {

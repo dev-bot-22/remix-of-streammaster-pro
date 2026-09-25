@@ -8,7 +8,7 @@ export async function getBatchInfo(batchId: string, type: string = "details") {
   };
   if (!(type in typeMap)) return null;
   const apiVersion = typeMap[type];
-  const PW_API = process.env.PW_API;
+  const PW_API = (process.env.PW_API || "https://api.penpencil.co");
   if (!PW_API) throw new Error("PW_API env not set");
   let url = `${PW_API}/${apiVersion}/batches/${batchId}/${type}`;
   try {

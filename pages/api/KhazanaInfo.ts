@@ -25,7 +25,7 @@ export default async function handler(
     return res.status(400).json({ message: "Invalid Type parameter" });
   }
 
-  const PW_API = process.env.PW_API;
+  const PW_API = (process.env.PW_API || "https://api.penpencil.co");
   let url = "";
   if (typeStr === "filters") {
     url = `${PW_API}/v2/programs/${programIdStr}/filters?page=1&limit=20`;

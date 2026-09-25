@@ -6,7 +6,7 @@ import VideoStream from "@/models/VideoStream";
 import { getVideoHeaders } from "@/utils/auth";
 import { Buffer } from "buffer";
 
-const PW_API = process.env.PW_API;
+const PW_API = (process.env.PW_API || "https://api.penpencil.co");
 
 async function getAnyActiveToken() {
   await dbConnect();

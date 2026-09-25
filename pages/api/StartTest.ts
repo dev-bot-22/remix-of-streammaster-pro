@@ -22,7 +22,7 @@ async function tryStartTestForToken(
   scheduleId: string,
   type: string
 ) {
-  const PW_API = process.env.PW_API || "https://api.penpencil.co";
+  const PW_API = (process.env.PW_API || "https://api.penpencil.co");
   
   // 1. Fetch cohortId from user profile info
   const profileUrl = `${PW_API}/v1/users/user-profile-info?fields=cohortId`;
@@ -86,7 +86,7 @@ export default async function handler(
   try {
     const user = await authenticateUser(req, res);
     const ActualToken = user.ActualToken;
-    const PW_API = process.env.PW_API || "https://api.penpencil.co";
+    const PW_API = (process.env.PW_API || "https://api.penpencil.co");
 
     const { batchId, subjectId, testId, scheduleId, type = "Start" } = req.query;
 

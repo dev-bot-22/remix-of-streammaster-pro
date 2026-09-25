@@ -149,7 +149,7 @@ async function handleCheckTokenStatus(
     }
 
     // Check token status using the same logic as get-user-details-list
-    const PW_API = process.env.PW_API;
+    const PW_API = (process.env.PW_API || "https://api.penpencil.co");
     const url = `${PW_API}/v1/users/user-profile-info?fields=cohortId,board`;
     // https://api.penpencil.co/v1/users/user-profile-info?fields=cohortId
 
