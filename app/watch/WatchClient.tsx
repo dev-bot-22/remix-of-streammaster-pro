@@ -176,9 +176,13 @@ export default function WatchPageClient() {
         const env = res.ok ? await res.json() : null;
         const data: any = env ? await openEnvelope(env) : null;
         if (signal.aborted) return;
-        const streamUrl = data?.src;
+        const streamUrl: string = data?.src || "";
+        const dashUrl: string = data?.dash || "";
 
-        if (!data?.success || typeof streamUrl !== "string" || !streamUrl.startsWith("/api/v/")) {
+        const hasHls = typeof streamUrl === "string" && streamUrl.startsWith("/api/v/");
+        const hasDash = typeof dashUrl === "string" && dashUrl.startsWith("http");
+
+        if (!data?.success || (!hasHls && !hasDash)) {
           setVideoType(null);
           setIsBatchUnavailable(true);
           toast.error("Lecture stream not available right now. Please try again.");
@@ -197,10 +201,14 @@ export default function WatchPageClient() {
           isLocked: false,
         };
 
+        if (data?.clearKeys) setClearKeys(data.clearKeys);
+        // both formats stay available: HLS plays first, DASH is one tap away
+        setFallbackUrl(hasHls && hasDash ? dashUrl : null);
         setVideoType("penpencilvdo");
-        setVideoUrl(streamUrl);
+        setVideoUrl(hasHls ? streamUrl : dashUrl);
         setLectureData(meta);
         saveWatchHistory(meta);
+
       } catch (err: any) {
         if (err?.name === "AbortError" || signal.aborted) return;
         console.error("Video setup failed:", err);
@@ -242,16 +250,24 @@ export default function WatchPageClient() {
     };
   }, []);
 
+  // The player never swaps formats on its own — the viewer decides.
   const handleHLSError = (error: any) => {
-    console.warn("HLS player failed, attempting fallback to DASH/ClearKey...", error);
+    console.warn("HLS playback error", error);
     if (fallbackUrl) {
-      toast.info("Adapting player settings for secure content...");
-      setVideoUrl(fallbackUrl);
+      toast.error("Playback problem. Tap 'Change player' to try the other format.");
     } else {
-      console.error("No fallback URL available for HLS failure");
-      toast.error("Video streaming failed. Please try refreshing the page.");
+      toast.error("Video streaming failed. Please try again.");
     }
   };
+
+  const switchPlayer = () => {
+    if (!fallbackUrl || !videoUrl) return;
+    const next = fallbackUrl;
+    setFallbackUrl(videoUrl);
+    setVideoUrl(next);
+    toast.info(next.includes(".m3u8") ? "Switched to HLS player" : "Switched to DASH player");
+  };
+
 
   return (
     <div className="h-[100%] md:overflow-auto lg:overflow-hidden select-none">
@@ -302,30 +318,41 @@ export default function WatchPageClient() {
         )}
 
         {!loading && !isBatchUnavailable && videoType === "penpencilvdo" && videoUrl ? (
-          videoUrl.includes(".m3u8") ? (
-            <HLSPlayer
-              baseUrl={videoUrl}
-              signedQuery={signedUrlQuery}
-              attachments={attachments}
-              downloadUrl={downloadUrl || undefined}
-              lectureTitle={lectureData?.title || ""}
-              lectureThumbnail={lectureData?.thumbnail || ""}
-              onError={handleHLSError}
-            />
-          ) : (
-            <DashPlayer
-              src={videoUrl}
-              type="dash"
-              attachments={attachments}
-              signedUrlQuery={signedUrlQuery}
-              drmConfig={clearKeys ? { clearKeys } : undefined}
-              ContentId={ContentId}
-              lectureTitle={lectureData?.title || ""}
-              lectureThumbnail={lectureData?.thumbnail || ""}
-              batchId={batchId}
-            />
-          )
+          <>
+            {fallbackUrl && (
+              <button
+                onClick={switchPlayer}
+                className="absolute top-3 right-3 z-40 rounded-full bg-black/60 px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur-md hover:bg-black/80 active:scale-95 transition"
+              >
+                Change player
+              </button>
+            )}
+            {videoUrl.includes(".m3u8") ? (
+              <HLSPlayer
+                baseUrl={videoUrl}
+                signedQuery={signedUrlQuery}
+                attachments={attachments}
+                downloadUrl={downloadUrl || undefined}
+                lectureTitle={lectureData?.title || ""}
+                lectureThumbnail={lectureData?.thumbnail || ""}
+                onError={handleHLSError}
+              />
+            ) : (
+              <DashPlayer
+                src={videoUrl}
+                type="dash"
+                attachments={attachments}
+                signedUrlQuery={signedUrlQuery}
+                drmConfig={clearKeys ? { clearKeys } : undefined}
+                ContentId={ContentId}
+                lectureTitle={lectureData?.title || ""}
+                lectureThumbnail={lectureData?.thumbnail || ""}
+                batchId={batchId}
+              />
+            )}
+          </>
         ) : !loading && (videoType === null || isBatchUnavailable) ? (
+
           <div className="flex flex-col items-center justify-center min-h-[400px] h-full p-6 text-center bg-gradient-to-br from-[#eef7f0] via-[#e4f6e8] to-[#f5f8ff] dark:from-[#0F1908] dark:via-[#1C2B22] dark:to-[#151D1A] transition-colors duration-300">
             <div className="w-full max-w-md p-8 rounded-2xl bg-white/80 dark:bg-[#1c2b22]/80 backdrop-blur-md shadow-xl border border-red-500/10 flex flex-col items-center animate-scaleIn">
               <Heart className="w-16 h-16 text-red-500 fill-red-500 animate-pulse mb-4 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
