@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Spring Season Theme Styles */
+@import './spring-theme.css';
+
+/* This file is a secondary entrypoint. Primary styles are in app/globals.css. */
+
+body {
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

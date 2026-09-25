@@ -1,29 +1,24 @@
-# Welcome to your Lovable project
+# PW-MARCO
 
-This project was built with [Lovable](https://lovable.dev).
+Next.js study platform for PW batches with an admin panel, guest/login modes and Neon Postgres storage.
 
-## Build with Lovable
+## Features
+- Batches list loaded from an admin-editable JSON link (default: GitHub `batches.json`)
+- Default PW-MARCO banner for batches without an image
+- Enroll -> Study (today's classes) -> My Batches flow
+- Admin panel at `/admin` (controls, users, guests, tokens, batches)
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+## Deploy on Heroku
+1. Push this repo to GitHub and connect it to a Heroku app (or `heroku git:remote`).
+2. Set config vars from `.env.example` (`DATABASE_URL`, `ADMIN_*`, `JWT_SECRET`, ...).
+3. Deploy — `heroku-postbuild` runs `next build`, the `release` phase runs DB migrations, `web` starts the server.
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+## Local development
+```bash
+npm install
+cp .env.example .env   # fill in values
 npm run dev
 ```
 
-## Built with
-
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
+## Changing the batches list
+Admin > Controls > **Batches source URL**: paste a new JSON link, click **Test link**, then **Save**. The Batches page updates immediately.
