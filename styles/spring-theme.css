@@ -1,0 +1,757 @@
+/* ═══════════════════════════════════════════════════════════
+   SPRING SEASON THEME — CSS Animations & Effects
+   PW-MARCO Educational Platform
+   ═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+/* ═══════════════════════════════════════════════════════════
+   1. SPRING COLOR VARIABLES
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* Primary Colors */
+  --spring-leaf: #4CAF6A;
+  --spring-mint: #7ED957;
+  --spring-yellow: #F5F9C1;
+
+  /* Secondary Colors */
+  --spring-sky: #8ED6FF;
+  --spring-lavender: #BFA8FF;
+  --spring-pink: #FFB7D5;
+
+  /* Neutral Colors */
+  --spring-cream: #FAFFF7;
+  --spring-sand: #F3F5EB;
+  --spring-forest: #1E2A22;
+
+  /* Accent Colors */
+  --spring-yellow-accent: #FFD84D;
+  --spring-pink-accent: #FF9ECF;
+
+  /* Glass Effects */
+  --spring-glass-light: rgba(255, 255, 255, 0.6);
+  --spring-glass-card: rgba(255, 255, 255, 0.9);
+  --spring-glass-blur: 14px;
+  --spring-glass-blur-card: 10px;
+
+  /* Shadows */
+  --spring-shadow-sm: 0 4px 8px rgba(76, 175, 106, 0.1);
+  --spring-shadow-md: 0 8px 24px rgba(76, 175, 106, 0.15);
+  --spring-shadow-lg: 0 16px 40px rgba(76, 175, 106, 0.25);
+  --spring-shadow-xl: 0 24px 52px rgba(76, 175, 106, 0.35);
+
+  /* Gradients */
+  --spring-gradient-bg: linear-gradient(
+    160deg,
+    #eef7f0 0%,
+    #e4f6e8 30%,
+    #e9f9ff 60%,
+    #f5f8ff 100%
+  );
+
+  --spring-button-gradient: linear-gradient(135deg, #7ED957 0%, #4CAF6A 100%);
+  --spring-button-gradient-hover: linear-gradient(135deg, #90FF6B 0%, #66CB82 100%);
+  --spring-button-gradient-pink: linear-gradient(135deg, #FFB7D5 0%, #FF9ECF 100%);
+  --spring-progress-gradient: linear-gradient(90deg, #4CAF6A, #7ED957);
+
+  /* Duration presets */
+  --spring-duration-fast: 0.3s;
+  --spring-duration-normal: 0.6s;
+  --spring-duration-slow: 1s;
+  --spring-duration-very-slow: 3s;
+
+  /* Easing */
+  --spring-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --spring-ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark {
+  /* Dark Mode Primary Colors */
+  --spring-leaf: #6DD477;
+  --spring-mint: #90FF6B;
+  --spring-yellow: #FFD84D;
+  --spring-sky: #7EBFFF;
+  --spring-lavender: #D5C9FF;
+  --spring-pink: #FF8FBE;
+
+  /* Dark Mode Backgrounds */
+  --spring-cream: #070a08;
+  --spring-sand: #121c15;
+  --spring-forest: #e8f5e9;
+
+  /* Dark Mode Glass */
+  --spring-glass-light: rgba(15, 25, 20, 0.45);
+  --spring-glass-card: rgba(18, 28, 22, 0.7);
+
+  /* Dark Mode Shadows */
+  --spring-shadow-sm: 0 4px 8px rgba(76, 175, 106, 0.04);
+  --spring-shadow-md: 0 8px 24px rgba(76, 175, 106, 0.05);
+  --spring-shadow-lg: 0 16px 40px rgba(76, 175, 106, 0.08);
+  --spring-shadow-xl: 0 24px 52px rgba(76, 175, 106, 0.1);
+
+  /* Dark Mode Gradients */
+  --spring-gradient-bg: linear-gradient(
+    135deg,
+    #070a08 0%,
+    #0f1913 40%,
+    #15241b 75%,
+    #0b0f0c 100%
+  );
+
+  --spring-button-gradient: linear-gradient(135deg, #6DD477 0%, #4CAF6A 100%);
+  --spring-button-gradient-hover: linear-gradient(135deg, #7DDF87 0%, #5DBF7A 100%);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   2. BACKGROUND EFFECTS
+   ═══════════════════════════════════════════════════════════ */
+
+.spring-bg-gradient {
+  background: var(--spring-gradient-bg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Radial glows in corners */
+.spring-bg-gradient::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(
+    circle,
+    rgba(76, 175, 106, 0.08) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.spring-bg-gradient::after {
+  content: '';
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 216, 77, 0.06) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--spring-gradient-bg);
+  color: var(--spring-forest);
+}
+
+body.dark {
+  background: var(--spring-gradient-bg);
+  color: #E8F5E9;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   3. ANIMATIONS
+   ═══════════════════════════════════════════════════════════ */
+
+/* 3.1 PETAL DRIFT ANIMATION */
+@keyframes petalDrift {
+  0% {
+    transform: translateY(-100px) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(100vh) translateX(30px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.petal-drift {
+  animation: petalDrift linear infinite;
+}
+
+.petal-drift-1 {
+  animation-duration: 8s;
+  animation-delay: 0s;
+}
+
+.petal-drift-2 {
+  animation-duration: 10s;
+  animation-delay: 1s;
+}
+
+.petal-drift-3 {
+  animation-duration: 12s;
+  animation-delay: 2s;
+}
+
+.petal-drift-4 {
+  animation-duration: 9s;
+  animation-delay: 3s;
+}
+
+.petal-drift-5 {
+  animation-duration: 11s;
+  animation-delay: 4s;
+}
+
+/* 3.2 LEAF SWAY ANIMATION */
+@keyframes leafSway {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
+}
+
+.leaf-sway {
+  animation: leafSway var(--spring-duration-very-slow) ease-in-out infinite;
+}
+
+/* 3.3 BLOOM ANIMATION (Completion) */
+@keyframes bloom {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.bloom {
+  animation: bloom var(--spring-duration-normal) var(--spring-ease-bounce);
+}
+
+/* 3.4 GROW PLANT ANIMATION (Progress) */
+@keyframes growPlant {
+  0% {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  100% {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+.grow-plant {
+  animation: growPlant 0.8s ease-out forwards;
+}
+
+/* 3.5 GLOW PULSE ANIMATION */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(76, 175, 106, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(76, 175, 106, 0.5);
+  }
+}
+
+.glow-pulse {
+  animation: glowPulse var(--spring-duration-very-slow) ease-in-out infinite;
+}
+
+/* 3.6 SCALE UP ANIMATION (Card Hover) */
+@keyframes scaleUp {
+  from {
+    transform: translateY(0) scale(1);
+  }
+  to {
+    transform: translateY(-8px) scale(1.02);
+  }
+}
+
+.scale-up {
+  animation: scaleUp var(--spring-duration-fast) var(--spring-ease-bounce) forwards;
+}
+
+/* 3.7 FADE IN ANIMATION */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* 3.8 SLIDE UP ANIMATION */
+@keyframes slideUp {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.slide-up {
+  animation: slideUp 0.6s ease-out forwards;
+}
+
+/* 3.9 PULSE ANIMATION (Gentle) */
+@keyframes gentlePulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.gentle-pulse {
+  animation: gentlePulse 2s ease-in-out infinite;
+}
+
+/* 3.10 BOUNCE ANIMATION (Subtle) */
+@keyframes subtleBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.subtle-bounce {
+  animation: subtleBounce 1.5s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   4. GLASS MORPHISM COMPONENTS
+   ═══════════════════════════════════════════════════════════ */
+
+.spring-glass {
+  background: var(--spring-glass-light);
+  backdrop-filter: blur(var(--spring-glass-blur));
+  border: 1px solid rgba(76, 175, 106, 0.1);
+  box-shadow: var(--spring-shadow-md);
+}
+
+.spring-glass:hover {
+  box-shadow: var(--spring-shadow-lg);
+  border: 1px solid rgba(76, 175, 106, 0.15);
+  transition: all 0.3s ease;
+}
+
+.spring-glass-card {
+  background: var(--spring-glass-card);
+  backdrop-filter: blur(var(--spring-glass-blur-card));
+  border: 1px solid rgba(76, 175, 106, 0.15);
+  box-shadow: var(--spring-shadow-md);
+  border-radius: 18px;
+}
+
+.spring-glass-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--spring-shadow-xl);
+  border: 1px solid rgba(76, 175, 106, 0.25);
+  animation: None;
+  transition: all 0.3s var(--spring-ease-bounce);
+}
+
+.dark .spring-glass {
+  background: var(--spring-glass-light);
+  border: 1px solid rgba(109, 212, 119, 0.15);
+}
+
+.dark .spring-glass-card {
+  background: var(--spring-glass-card);
+  border: 1px solid rgba(109, 212, 119, 0.2);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   5. BUTTON STYLES
+   ═══════════════════════════════════════════════════════════ */
+
+.spring-btn-primary {
+  background: var(--spring-button-gradient);
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  box-shadow: 0 4px 15px rgba(76, 175, 106, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.spring-btn-primary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 28px rgba(76, 175, 106, 0.4);
+  background: var(--spring-button-gradient-hover);
+}
+
+.spring-btn-primary:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(76, 175, 106, 0.2);
+}
+
+.spring-btn-secondary {
+  background: rgba(76, 175, 106, 0.12);
+  color: var(--spring-leaf);
+  border: 1.5px solid rgba(76, 175, 106, 0.3);
+  padding: 11px 27px;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.spring-btn-secondary:hover {
+  background: rgba(76, 175, 106, 0.18);
+  border-color: rgba(76, 175, 106, 0.5);
+  box-shadow: 0 4px 12px rgba(76, 175, 106, 0.15);
+}
+
+.spring-btn-accent {
+  background: var(--spring-button-gradient-pink);
+  color: var(--spring-forest);
+  border: none;
+  padding: 12px 28px;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.spring-btn-accent:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 28px rgba(255, 183, 213, 0.3);
+}
+
+.spring-btn-ghost {
+  background: transparent;
+  border: 1.5px solid rgba(76, 175, 106, 0.2);
+  color: var(--spring-leaf);
+  padding: 11px 27px;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.spring-btn-ghost:hover {
+  background: rgba(76, 175, 106, 0.05);
+  border-color: rgba(76, 175, 106, 0.4);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   6. INPUT STYLES
+   ═══════════════════════════════════════════════════════════ */
+
+.spring-input,
+.spring-textarea,
+.spring-select {
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(76, 175, 106, 0.15);
+  padding: 12px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  color: var(--spring-forest);
+}
+
+.spring-input::placeholder,
+.spring-textarea::placeholder {
+  color: rgba(30, 42, 34, 0.4);
+  font-weight: 400;
+}
+
+.spring-input:focus,
+.spring-textarea:focus,
+.spring-select:focus {
+  outline: none;
+  border: 1.5px solid var(--spring-leaf);
+  box-shadow: 0 0 0 3px rgba(76, 175, 106, 0.15);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.dark .spring-input,
+.dark .spring-textarea,
+.dark .spring-select {
+  background: rgba(31, 41, 34, 0.6);
+  border: 1.5px solid rgba(109, 212, 119, 0.2);
+  color: #E8F5E9;
+}
+
+.dark .spring-input::placeholder,
+.dark .spring-textarea::placeholder {
+  color: rgba(232, 245, 233, 0.4);
+}
+
+.dark .spring-input:focus,
+.dark .spring-textarea:focus,
+.dark .spring-select:focus {
+  border: 1.5px solid var(--spring-leaf);
+  box-shadow: 0 0 0 3px rgba(109, 212, 119, 0.2);
+  background: rgba(31, 41, 34, 0.8);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   7. PROGRESS & INDICATORS
+   ═══════════════════════════════════════════════════════════ */
+
+.spring-progress {
+  height: 8px;
+  border-radius: 12px;
+  background: rgba(76, 175, 106, 0.1);
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.spring-progress-fill {
+  height: 100%;
+  background: var(--spring-progress-gradient);
+  border-radius: 12px;
+  transition: width 0.8s ease-out;
+  box-shadow: 0 2px 8px rgba(76, 175, 106, 0.2);
+}
+
+.spring-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+}
+
+.spring-badge-success {
+  background: rgba(76, 175, 106, 0.15);
+  color: var(--spring-leaf);
+}
+
+.spring-badge-alert {
+  background: rgba(255, 216, 77, 0.15);
+  color: var(--spring-yellow-accent);
+}
+
+.spring-badge-premium {
+  background: rgba(191, 168, 255, 0.15);
+  color: var(--spring-lavender);
+}
+
+.spring-badge-info {
+  background: rgba(142, 214, 255, 0.15);
+  color: var(--spring-sky);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   8. TABS & NAVIGATION
+   ═══════════════════════════════════════════════════════════ */
+
+.spring-tabs-list {
+  border-bottom: 1px solid rgba(76, 175, 106, 0.1);
+  display: flex;
+  gap: 8px;
+}
+
+.spring-tabs-trigger {
+  padding: 12px 16px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: rgba(30, 42, 34, 0.6);
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.spring-tabs-trigger:hover {
+  color: var(--spring-leaf);
+}
+
+.spring-tabs-trigger[data-state='active'] {
+  color: var(--spring-leaf);
+  border-bottom-color: var(--spring-mint);
+  font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   9. TOOLTIPS & POPOVERS
+   ═══════════════════════════════════════════════════════════ */
+
+.spring-tooltip {
+  background: rgba(30, 42, 34, 0.95);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.dark .spring-tooltip {
+  background: rgba(232, 245, 233, 0.95);
+  color: var(--spring-forest);
+}
+
+.spring-popover {
+  background: var(--spring-glass-card);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(76, 175, 106, 0.15);
+  border-radius: 14px;
+  box-shadow: var(--spring-shadow-lg);
+  padding: 16px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   10. ACCESSIBILITY PREFERENCES
+   ═══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .petal-drift,
+  .leaf-sway,
+  .bloom,
+  .glow-pulse,
+  .gentle-pulse,
+  .subtle-bounce {
+    animation: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   11. UTILITY CLASSES
+   ═══════════════════════════════════════════════════════════ */
+
+.spring-text-primary {
+  color: var(--spring-forest);
+}
+
+.spring-text-secondary {
+  color: rgba(30, 42, 34, 0.7);
+}
+
+.spring-text-accent {
+  color: var(--spring-leaf);
+}
+
+.spring-text-success {
+  color: var(--spring-mint);
+}
+
+.spring-border-light {
+  border: 1px solid rgba(76, 175, 106, 0.1);
+}
+
+.spring-border-primary {
+  border: 1.5px solid rgba(76, 175, 106, 0.3);
+}
+
+.spring-divider {
+  border-top: 1px solid rgba(76, 175, 106, 0.1);
+}
+
+.spring-shadow-sm {
+  box-shadow: var(--spring-shadow-sm);
+}
+
+.spring-shadow-md {
+  box-shadow: var(--spring-shadow-md);
+}
+
+.spring-shadow-lg {
+  box-shadow: var(--spring-shadow-lg);
+}
+
+.spring-shadow-xl {
+  box-shadow: var(--spring-shadow-xl);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   12. SCROLLBAR STYLING
+   ═══════════════════════════════════════════════════════════ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(76, 175, 106, 0.3);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(76, 175, 106, 0.5);
+}
+
+.dark::-webkit-scrollbar-thumb {
+  background: rgba(109, 212, 119, 0.2);
+}
+
+.dark::-webkit-scrollbar-thumb:hover {
+  background: rgba(109, 212, 119, 0.4);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   13. RESPONSIVE DESIGN
+   ═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .spring-btn-primary,
+  .spring-btn-secondary,
+  .spring-btn-accent {
+    width: 100%;
+    padding: 14px 24px;
+  }
+
+  .spring-glass-card {
+    padding: 16px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   End of Spring Design System Styles
+   ═══════════════════════════════════════════════════════════ */

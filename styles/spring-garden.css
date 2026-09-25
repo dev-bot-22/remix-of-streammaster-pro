@@ -1,0 +1,803 @@
+/* ═══════════════════════════════════════════════════════════
+   SPRING GARDEN AESTHETIC — Complete UI Redesign
+   PW-MARCO Educational Platform
+   A peaceful spring garden learning experience
+   ═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+/* ═══════════════════════════════════════════════════════════
+   ROOT CSS VARIABLES — Spring Garden Colors & Effects
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* Primary Spring Colors */
+  --spring-leaf: #4CAF6A;
+  --spring-mint: #7ED957;
+  --spring-forest: #1C2B22;
+  --spring-yellow: #FFD84D;
+  --spring-pink: #FFB7D5;
+  --spring-lavender: #C5B4FF;
+  
+  /* Light Mode Backgrounds */
+  --bg-light-0: #F7FFF4;
+  --bg-light-1: #ECFFE8;
+  --bg-light-2: #E4FFE1;
+  --bg-light-soft: #F5F9F1;
+  --bg-card-light: rgba(255, 255, 255, 0.92);
+  
+  /* Dark Mode Backgrounds */
+  --bg-dark-0: #0F1A14;
+  --bg-dark-1: #1C2B22;
+  --bg-dark-2: #2A3E35;
+  --bg-card-dark: rgba(31, 42, 37, 0.85);
+  
+  /* Shadows - Garden Inspired */
+  --shadow-petal: 0 8px 20px rgba(60, 120, 80, 0.15);
+  --shadow-leaf: 0 12px 32px rgba(76, 175, 106, 0.2);
+  --shadow-glow: 0 6px 16px rgba(126, 217, 87, 0.4);
+  --shadow-bloom: 0 16px 48px rgba(76, 175, 106, 0.25);
+  
+  /* Gradients */
+  --gradient-bg-light: linear-gradient(135deg, #F7FFF4 0%, #ECFFE8 40%, #E4FFE1 70%, #F5F9FF 100%);
+  --gradient-bg-dark: linear-gradient(135deg, #0F1A14 0%, #1C2B22 40%, #2A3E35 70%, #1A2A1F 100%);
+  --gradient-button: linear-gradient(135deg, #7ED957 0%, #4CAF6A 100%);
+  --gradient-button-hover: linear-gradient(135deg, #90FF6B 0%, #66CB82 100%);
+  
+  /* Sunlight Glow */
+  --radial-sunlight: radial-gradient(circle at 20% 10%, rgba(255, 255, 200, 0.4), transparent 40%);
+  
+  /* Font Stack */
+  --font-heading: 'Poppins', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+.dark {
+  --bg-light-0: #0F1A14;
+  --bg-light-1: #1C2B22;
+  --bg-light-2: #2A3E35;
+  --bg-light-soft: #1A2A1F;
+  --bg-card-light: rgba(31, 42, 37, 0.85);
+  --gradient-bg-light: linear-gradient(135deg, #0F1A14 0%, #1C2B22 40%, #2A3E35 70%, #1A2A1F 100%);
+  --radial-sunlight: radial-gradient(circle at 20% 10%, rgba(126, 217, 87, 0.2), transparent 40%);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   GLOBAL SPRING GARDEN BACKGROUND
+   ═══════════════════════════════════════════════════════════ */
+
+html, body {
+  background: var(--gradient-bg-light);
+  position: relative;
+  overflow-x: hidden;
+}
+
+html::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--radial-sunlight);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dark html, .dark body {
+  background: var(--gradient-bg-dark);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ANIMATED FLOWER PETALS — Floating Downward
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes petal-fall {
+  0% {
+    transform: translateY(-100px) translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  25% {
+    transform: translateY(25vh) translateX(50px) rotate(90deg);
+  }
+  50% {
+    transform: translateY(50vh) translateX(-30px) rotate(180deg);
+  }
+  75% {
+    transform: translateY(75vh) translateX(40px) rotate(270deg);
+  }
+  100% {
+    transform: translateY(100vh) translateX(0) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes petal-sway {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(20px); }
+}
+
+/* Petal Elements */
+.petal {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.6;
+  mix-blend-mode: multiply;
+}
+
+.petal::before {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 8px;
+  background: var(--spring-pink);
+  border-radius: 50% 0;
+  transform: rotate(-45deg);
+  box-shadow: 
+    -3px 2px 0 rgba(255, 184, 213, 0.5),
+    3px -2px 0 rgba(255, 152, 207, 0.5);
+}
+
+.petal:nth-child(1) {
+  left: 10%;
+  animation: petal-fall 45s linear infinite;
+  animation-delay: 0s;
+}
+
+.petal:nth-child(2) {
+  left: 20%;
+  animation: petal-fall 50s linear infinite;
+  animation-delay: 5s;
+}
+
+.petal:nth-child(3) {
+  left: 30%;
+  animation: petal-fall 48s linear infinite;
+  animation-delay: 10s;
+}
+
+.petal:nth-child(4) {
+  left: 40%;
+  animation: petal-fall 52s linear infinite;
+  animation-delay: 15s;
+}
+
+.petal:nth-child(5) {
+  left: 50%;
+  animation: petal-fall 46s linear infinite;
+  animation-delay: 20s;
+}
+
+.petal:nth-child(6) {
+  left: 60%;
+  animation: petal-fall 49s linear infinite;
+  animation-delay: 25s;
+}
+
+.petal:nth-child(7) {
+  left: 70%;
+  animation: petal-fall 51s linear infinite;
+  animation-delay: 30s;
+}
+
+.petal:nth-child(8) {
+  left: 80%;
+  animation: petal-fall 47s linear infinite;
+  animation-delay: 35s;
+}
+
+.petal:nth-child(9) {
+  left: 90%;
+  animation: petal-fall 53s linear infinite;
+  animation-delay: 40s;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LEAF SWAY ANIMATION
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes leaf-sway {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  50% { transform: rotate(2deg) translateY(-2px); }
+}
+
+@keyframes leaf-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-4px) rotate(5deg); }
+  50% { transform: translateY(0) rotate(10deg); }
+  75% { transform: translateY(-2px) rotate(5deg); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BLOOM ANIMATION — Flower Opening Effect
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes bloom {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bloom-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(126, 217, 87, 0.7);
+  }
+  50% { 
+    box-shadow: 0 0 0 8px rgba(126, 217, 87, 0);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SUNLIGHT GLOW ANIMATION
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes sunlight-shimmer {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.5; }
+}
+
+.sunlight-accent {
+  animation: sunlight-shimmer 4s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BUTTON STYLES — Organic Garden Buttons
+   ═══════════════════════════════════════════════════════════ */
+
+.btn-garden {
+  border-radius: 28px;
+  padding: 14px 32px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-glow);
+}
+
+.btn-garden::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.6s ease-out;
+  pointer-events: none;
+}
+
+.btn-garden:hover::before {
+  transform: translate(-50%, -50%) scale(2);
+}
+
+/* Primary Button */
+.btn-primary-garden {
+  background: var(--gradient-button);
+  color: white;
+  box-shadow: var(--shadow-glow);
+}
+
+.btn-primary-garden:hover {
+  background: var(--gradient-button-hover);
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: var(--shadow-bloom);
+}
+
+.btn-primary-garden:active {
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* Secondary Button */
+.btn-secondary-garden {
+  background: rgba(76, 175, 106, 0.15);
+  color: var(--spring-leaf);
+  border: 2px solid var(--spring-leaf);
+  box-shadow: var(--shadow-petal);
+}
+
+.btn-secondary-garden:hover {
+  background: var(--spring-leaf);
+  color: white;
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-leaf);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HERO SECTION STYLES
+   ═══════════════════════════════════════════════════════════ */
+
+.hero-garden {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+}
+
+.hero-leaf-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  animation: leaf-float 3s ease-in-out infinite;
+}
+
+.hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(36px, 8vw, 56px);
+  font-weight: 700;
+  color: var(--spring-forest);
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #4CAF6A, #7ED957);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark .hero-title {
+  color: #E8F5E9;
+  background: linear-gradient(135deg, #6DD477, #90FF6B);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(16px, 4vw, 20px);
+  color: var(--spring-forest);
+  opacity: 0.8;
+  margin-bottom: 40px;
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+.dark .hero-subtitle {
+  color: #C8E6C9;
+}
+
+.hero-buttons-container {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(14px);
+  border-radius: 20px;
+  padding: 24px 32px;
+  margin-bottom: 32px;
+  box-shadow: 0 8px 24px rgba(76, 175, 106, 0.1);
+  border: 1px solid rgba(76, 175, 106, 0.1);
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-description {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--spring-forest);
+  opacity: 0.7;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.dark .hero-description {
+  color: #A8D5BA;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CARD STYLES — Garden Tile Cards
+   ═══════════════════════════════════════════════════════════ */
+
+.card-garden {
+  background: var(--bg-card-light);
+  border-radius: 18px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(76, 175, 106, 0.1);
+  box-shadow: var(--shadow-petal);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.dark .card-garden {
+  background: var(--bg-card-dark);
+  border-color: rgba(126, 217, 87, 0.15);
+}
+
+.card-garden::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(126, 217, 87, 0.1) 0%, transparent 70%);
+  transition: all 0.6s ease-out;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.card-garden:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-bloom);
+  border-color: rgba(126, 217, 87, 0.3);
+}
+
+.dark .card-garden:hover {
+  border-color: rgba(126, 217, 87, 0.4);
+}
+
+.card-garden:hover::before {
+  opacity: 1;
+  top: -25%;
+  right: -25%;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   COMPLETED LECTURE BLOOM EFFECT
+   ═══════════════════════════════════════════════════════════ */
+
+.completion-bloom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4CAF6A, #7ED957);
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  animation: bloom 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), bloom-pulse 2s ease-in-out infinite;
+  box-shadow: 
+    0 0 0 0 rgba(126, 217, 87, 0.7),
+    0 0 20px rgba(255, 216, 77, 0.3);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   VIDEO PLAYER CONTAINER — Wooden Garden Board
+   ═══════════════════════════════════════════════════════════ */
+
+.video-garden-frame {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #F5F5F0;
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.1),
+    0 16px 40px rgba(76, 175, 106, 0.15);
+  padding: 8px;
+  margin: 20px 0;
+}
+
+.dark .video-garden-frame {
+  background: #2A3E35;
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.3),
+    0 16px 40px rgba(76, 175, 106, 0.12);
+}
+
+/* Leaf corner decorations */
+.video-garden-frame::before,
+.video-garden-frame::after {
+  content: '🌿';
+  position: absolute;
+  font-size: 20px;
+  z-index: 10;
+  opacity: 0.3;
+  animation: leaf-sway 3s ease-in-out infinite;
+}
+
+.video-garden-frame::before {
+  top: 12px;
+  left: 12px;
+  animation-delay: 0s;
+}
+
+.video-garden-frame::after {
+  bottom: 12px;
+  right: 12px;
+  animation-delay: 1s;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SIDEBAR GARDEN PANEL
+   ═══════════════════════════════════════════════════════════ */
+
+.sidebar-garden {
+  background: linear-gradient(180deg, rgba(126, 217, 87, 0.08) 0%, rgba(76, 175, 106, 0.05) 100%);
+  backdrop-filter: blur(14px);
+  border-right: 1px solid rgba(76, 175, 106, 0.12);
+}
+
+.dark .sidebar-garden {
+  background: linear-gradient(180deg, rgba(126, 217, 87, 0.06) 0%, rgba(76, 175, 106, 0.04) 100%);
+  border-right-color: rgba(126, 217, 87, 0.12);
+}
+
+.nav-item-garden {
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 6px 0;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-item-garden::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(126, 217, 87, 0.2) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.nav-item-garden:hover {
+  background: rgba(126, 217, 87, 0.12);
+  transform: scale(1.03);
+  padding-left: 20px;
+}
+
+.nav-item-garden.active {
+  background: rgba(76, 175, 106, 0.15);
+  color: var(--spring-leaf);
+  border-left: 3px solid var(--spring-leaf);
+  box-shadow: inset 2px 0 8px rgba(76, 175, 106, 0.1);
+}
+
+.dark .nav-item-garden.active {
+  background: rgba(126, 217, 87, 0.15);
+  color: #90FF6B;
+  border-left-color: #90FF6B;
+  box-shadow: inset 2px 0 8px rgba(126, 217, 87, 0.1);
+}
+
+.nav-icon {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+.nav-item-garden:hover .nav-icon {
+  animation: leaf-sway 0.5s ease-in-out;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TYPOGRAPHY — Forest Green & Soft
+   ═══════════════════════════════════════════════════════════ */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--spring-forest);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: #E8F5E9;
+}
+
+body, p, span, a, button {
+  font-family: var(--font-body);
+  color: var(--spring-forest);
+}
+
+.dark body, .dark p, .dark span, .dark a, .dark button {
+  color: #C8E6C9;
+}
+
+.text-forest-dark {
+  color: #1C2B22;
+}
+
+.dark .text-forest-dark {
+  color: #E8F5E9;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PROGRESS BAR — Growing Plant
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes grow-plant {
+  0% { width: 0; }
+  100% { width: 100%; }
+}
+
+.progress-garden {
+  height: 6px;
+  background: rgba(76, 175, 106, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dark .progress-garden {
+  background: rgba(126, 217, 87, 0.1);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.progress-garden-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF6A, #7ED957);
+  border-radius: 3px;
+  box-shadow: 0 0 12px rgba(126, 217, 87, 0.6);
+  animation: grow-plant 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LOADER — Blooming Flower
+   ═══════════════════════════════════════════════════════════ */
+
+.loader-garden {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader-petal {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4CAF6A, #7ED957);
+  animation: bloom 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+}
+
+.loader-petal:nth-child(1) { animation-delay: 0s; }
+.loader-petal:nth-child(2) { animation-delay: 0.3s; }
+.loader-petal:nth-child(3) { animation-delay: 0.6s; }
+
+/* ═══════════════════════════════════════════════════════════
+   INPUT FIELDS — Garden Path
+   ═══════════════════════════════════════════════════════════ */
+
+.input-garden {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 2px solid rgba(76, 175, 106, 0.2);
+  background: rgba(255, 255, 255, 0.6);
+  font-family: var(--font-body);
+  color: var(--spring-forest);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.dark .input-garden {
+  background: rgba(31, 42, 37, 0.6);
+  border-color: rgba(126, 217, 87, 0.2);
+  color: #C8E6C9;
+}
+
+.input-garden:focus {
+  outline: none;
+  border-color: var(--spring-mint);
+  box-shadow: 0 0 0 3px rgba(126, 217, 87, 0.1);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.dark .input-garden:focus {
+  background: rgba(31, 42, 37, 0.8);
+  box-shadow: 0 0 0 3px rgba(126, 217, 87, 0.15);
+}
+
+.input-garden::placeholder {
+  color: var(--spring-forest);
+  opacity: 0.5;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BADGE — Nature Status Indicators
+   ═══════════════════════════════════════════════════════════ */
+
+.badge-garden {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(76, 175, 106, 0.2);
+}
+
+.badge-success {
+  background: rgba(76, 175, 106, 0.15);
+  color: var(--spring-leaf);
+  border-color: rgba(76, 175, 106, 0.3);
+}
+
+.dark .badge-success {
+  background: rgba(126, 217, 87, 0.15);
+  color: #90FF6B;
+  border-color: rgba(126, 217, 87, 0.3);
+}
+
+.badge-alert {
+  background: rgba(255, 184, 213, 0.15);
+  color: #FF7BA0;
+  border-color: rgba(255, 184, 213, 0.3);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE DESIGN
+   ═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .hero-garden {
+    min-height: auto;
+    padding: 60px 20px;
+  }
+  
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .btn-garden {
+    width: 100%;
+  }
+  
+  .sidebar-garden {
+    padding: 12px;
+  }
+  
+  .nav-item-garden {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   UTILITIES
+   ═══════════════════════════════════════════════════════════ */
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(76, 175, 106, 0.1);
+}
+
+.dark .glass-effect {
+  background: rgba(31, 42, 37, 0.6);
+  border-color: rgba(126, 217, 87, 0.1);
+}
+
+.glow-garden {
+  box-shadow: 0 0 20px rgba(126, 217, 87, 0.4);
+}
+
+.dark .glow-garden {
+  box-shadow: 0 0 20px rgba(126, 217, 87, 0.3);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ANIMATION END
+   ═══════════════════════════════════════════════════════════ */
