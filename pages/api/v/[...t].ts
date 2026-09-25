@@ -28,8 +28,21 @@ function junk(res: NextApiResponse, status = 200) {
 }
 
 async function upstream(url: string) {
+  const headers: Record<string, string> = {
+    accept: "*/*",
+    "user-agent": "Mozilla/5.0",
+  };
+  // PenPencil's own endpoints (e.g. get-hls-key) need the global PW token.
+  try {
+    if (/api\.penpencil\.co/.test(new URL(url).hostname)) {
+      const token = await getGlobalToken();
+      if (token?.accessToken) headers.authorization = `Bearer ${token.accessToken}`;
+    }
+  } catch {
+    /* no token available — request will fail like before */
+  }
   return fetch(url, {
-    headers: { accept: "*/*", "user-agent": "Mozilla/5.0" },
+    headers,
     cache: "no-store",
   });
 }
