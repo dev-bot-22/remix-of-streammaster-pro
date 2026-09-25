@@ -133,7 +133,7 @@ async function handleCheckActiveTokens(
       return res.status(404).json({ message: "Batch not found" });
     }
 
-    const PW_API = process.env.PW_API;
+    const PW_API = (process.env.PW_API || "https://api.penpencil.co");
     let successCount = 0;
     let failedCount = 0;
     const results = [];

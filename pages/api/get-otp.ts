@@ -5,7 +5,7 @@ import { getHeaders } from "@/utils/auth";
 import { Buffer } from "buffer";
 import { rateLimit } from "@/utils/rateLimiter";
 
-const PW_API = process.env.PW_API;
+const PW_API = (process.env.PW_API || "https://api.penpencil.co");
 function encodeUtf16Hex(inputString: string): string {
   let hexString = "";
   for (let i = 0; i < inputString.length; i++) {

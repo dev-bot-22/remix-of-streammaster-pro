@@ -30,7 +30,7 @@ export default async function handler(
   }
 
   const apiVersion = typeMap[typeStr];
-  const PW_API = process.env.PW_API;
+  const PW_API = (process.env.PW_API || "https://api.penpencil.co");
   let url = `${PW_API}/${apiVersion}/batches/${BatchId}/${typeStr}`;
 
   if (typeStr === "announcement") {

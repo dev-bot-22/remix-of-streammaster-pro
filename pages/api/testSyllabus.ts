@@ -24,7 +24,7 @@ export default async function handler(
     const user = await authenticateUser(req, res);
     const ActualToken = user.ActualToken;
 
-    const pwApiBase = (process.env.PW_API || "https://api.penpencil.co").replace(/\/$/, "");
+    const pwApiBase = ((process.env.PW_API || "https://api.penpencil.co")).replace(/\/$/, "");
     const url = `${pwApiBase}/v3/test-service/tests/${testId}/instructions`;
 
     let response;

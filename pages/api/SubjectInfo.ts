@@ -14,7 +14,7 @@ export default async function handler(
     let ActualToken = user.ActualToken;
 
     const { BatchId, SubjectId, batchTagType } = req.query;
-    const PW_API = process.env.PW_API;
+    const PW_API = (process.env.PW_API || "https://api.penpencil.co");
 
     if (!BatchId || typeof BatchId !== "string") {
       return res

@@ -37,7 +37,7 @@ async function getClearKeyLocally(
   accessToken: string,
   randomId: string
 ): Promise<Record<string, string> | null> {
-  const PW_API = process.env.PW_API;
+  const PW_API = (process.env.PW_API || "https://api.penpencil.co");
   try {
     const cleanKid = kid.replace(/[-\s]/g, "");
     const KeyBase64 = xorStrings(cleanKid, accessToken);
@@ -67,7 +67,7 @@ async function getVideoFromPaidToken(
   accessToken: string,
   randomId: string
 ): Promise<any | null> {
-  const PW_API = process.env.PW_API;
+  const PW_API = (process.env.PW_API || "https://api.penpencil.co");
   try {
     const videoUrl = `${PW_API}/v1/videos/video-url-details?type=BATCHES&videoContainerType=DASH&reqType=query&childId=${childId}&parentId=${parentId}&clientVersion=201`;
     const res = await fetch(videoUrl, {

@@ -15,7 +15,7 @@ export default async function handler(
     // Verify user token before proceeding
     const user = await authenticateUser(req, res);
     let ActualToken = user.ActualToken;
-    const PW_API = process.env.PW_API;
+    const PW_API = (process.env.PW_API || "https://api.penpencil.co");
     const { BatchId, SubjectId, ContentId } = req.query;
 
     // Validate required params first

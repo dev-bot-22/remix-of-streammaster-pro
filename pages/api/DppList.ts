@@ -21,7 +21,7 @@ async function fetchDppListForToken(
   chapterId: string,
   pageNum: number
 ) {
-  const PW_API = process.env.PW_API || "https://api.penpencil.co";
+  const PW_API = (process.env.PW_API || "https://api.penpencil.co");
   let resolvedSubjectId = String(batchSubjectId);
   let resolvedChapterId = String(chapterId);
 
@@ -88,7 +88,7 @@ export default async function handler(
   try {
     const user = await authenticateUser(req, res);
     const ActualToken = user.ActualToken;
-    const PW_API = process.env.PW_API || "https://api.penpencil.co";
+    const PW_API = (process.env.PW_API || "https://api.penpencil.co");
 
     const { batchId, batchSubjectId, chapterId, page } = req.query;
 
