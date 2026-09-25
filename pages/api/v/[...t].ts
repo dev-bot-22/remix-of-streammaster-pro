@@ -27,24 +27,50 @@ function junk(res: NextApiResponse, status = 200) {
   return res.status(status).json(decoy());
 }
 
+const PAID_WORKER_PROXY =
+  process.env.PAID_STREAM_PROXY ||
+  "https://pw-paid-stream.raghutiwari554-34f.workers.dev/api/proxy-stream?url=";
+
+/**
+ * PenPencil blocks datacenter IPs (Vercel/Heroku/this server) whenever an
+ * Authorization header is present, but Cloudflare Worker IPs are allowed and
+ * the paid worker's proxy passes the Authorization header through — so the
+ * token-gated endpoints (e.g. get-hls-key) are fetched via that proxy.
+ */
+async function penpencilViaProxy(url: string, auth?: string) {
+  if (!auth) return null;
+  try {
+    return await fetch(`${PAID_WORKER_PROXY}${encodeURIComponent(url)}`, {
+      headers: { authorization: auth, accept: "*/*" },
+      cache: "no-store",
+    });
+  } catch {
+    return null;
+  }
+}
+
 async function upstream(url: string) {
   const headers: Record<string, string> = {
     accept: "*/*",
     "user-agent": "Mozilla/5.0",
   };
   // PenPencil's own endpoints (e.g. get-hls-key) need the global PW token.
+  let auth = "";
   try {
     if (/api\.penpencil\.co/.test(new URL(url).hostname)) {
       const token = await getGlobalToken();
-      if (token?.accessToken) headers.authorization = `Bearer ${token.accessToken}`;
+      if (token?.accessToken) {
+        auth = `Bearer ${token.accessToken}`;
+        headers.authorization = auth;
+      }
     }
   } catch {
     /* no token available — request will fail like before */
   }
-  return fetch(url, {
-    headers,
-    cache: "no-store",
-  });
+  const direct = await fetch(url, { headers, cache: "no-store" });
+  if (direct.ok || !auth) return direct;
+  const proxied = await penpencilViaProxy(url, auth);
+  return proxied || direct;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
