@@ -154,18 +154,6 @@ export async function fetchTokenFromSource(url: string): Promise<GlobalToken> {
 export async function getGlobalToken(forceRefresh = false): Promise<GlobalToken> {
   const settings = await getAppSettings();
 
-  if (settings.manualToken && !forceRefresh && !global.__badTokens?.has(settings.manualToken)) {
-    const manual: GlobalToken = {
-      accessToken: settings.manualToken,
-      refreshToken: "",
-      randomId: randomId(),
-      expiresAt: decodeJwtExpiry(settings.manualToken),
-      fetchedAt: new Date(),
-      source: "manual",
-    };
-    if (!manual.expiresAt || isFresh(manual)) return manual;
-  }
-
   const bad = (t?: GlobalToken | null) => !!t && !!global.__badTokens?.has(t.accessToken);
   if (!forceRefresh && isFresh(global.__globalToken) && !bad(global.__globalToken)) return global.__globalToken!;
 
@@ -205,7 +193,7 @@ export async function getGlobalTokenStatus() {
   const cached = await readCachedToken();
   return {
     tokenUrl: settings.tokenUrl,
-    hasManualToken: Boolean(settings.manualToken),
+    hasManualToken: false,
     hasToken: Boolean(cached?.accessToken),
     fetchedAt: cached?.fetchedAt || null,
     expiresAt: cached?.expiresAt || null,

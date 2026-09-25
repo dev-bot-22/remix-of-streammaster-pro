@@ -1,9 +1,9 @@
 // pages/api/admin/admin.ts — admin login (credentials come from env vars).
 import type { NextApiRequest, NextApiResponse } from "next";
 import {
-  adminConfigured,
   adminCookieString,
-  checkAdminCredentials,
+  adminConfiguredAsync,
+  checkAdminCredentialsAsync,
   signAdminToken,
 } from "@/lib/adminAuth";
 
@@ -17,13 +17,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ message: "Username and password required" });
   }
 
-  if (!adminConfigured()) {
+  if (!(await adminConfiguredAsync())) {
     return res.status(500).json({
       message: "Admin not configured. Set ADMIN_USERNAME and ADMIN_PASSWORD environment variables.",
     });
   }
 
-  if (!checkAdminCredentials(String(username), String(password))) {
+  if (!(await checkAdminCredentialsAsync(String(username), String(password)))) {
     return res.status(401).json({ message: "Invalid credentials" });
   }
 

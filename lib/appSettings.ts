@@ -63,6 +63,12 @@ export async function getAppSettings(force = false): Promise<AppSettings> {
     const value = {
       ...DEFAULTS,
       ...stored,
+      // Production must stay in guest mode and always use StudySpark's fresh
+      // exchange token. Any old manual token saved in the database is ignored
+      // because PW rejects stale pasted tokens and that causes refresh loops.
+      loginEnabled: false,
+      tokenUrl: stored.tokenUrl?.trim() || DEFAULTS.tokenUrl,
+      manualToken: "",
       // Older deployments may have persisted empty API fields. Keep the
       // environment/default providers active instead of disabling streaming.
       primaryStreamApi: stored.primaryStreamApi?.trim() || DEFAULTS.primaryStreamApi,
@@ -84,7 +90,13 @@ export async function updateAppSettings(patch: Partial<AppSettings>): Promise<Ap
   }
   await ensureSchema();
   const current = await getAppSettings(true);
-  const next: AppSettings = { ...current, ...patch };
+  const next: AppSettings = {
+    ...current,
+    ...patch,
+    loginEnabled: false,
+    tokenUrl: patch.tokenUrl?.trim() || current.tokenUrl || DEFAULTS.tokenUrl,
+    manualToken: "",
+  };
   await query(
     `INSERT INTO app_settings (key, value, updated_at) VALUES ($1, $2::jsonb, now())
      ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now()`,

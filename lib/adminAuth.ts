@@ -3,7 +3,9 @@
 //   ADMIN_USERNAME, ADMIN_PASSWORD, ADMIN_SESSION_SECRET
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { ensureSchema, isDatabaseConfigured, query } from "./db";
 
 export const ADMIN_COOKIE = "admin_token";
 export const ADMIN_MAX_AGE_SECONDS = 60 * 60 * 12; // 12 hours
@@ -77,6 +79,32 @@ export function adminConfigured(): boolean {
   return Boolean(process.env.ADMIN_USERNAME && process.env.ADMIN_PASSWORD);
 }
 
+async function ensureAdminCredentialsSchema(): Promise<void> {
+  if (!isDatabaseConfigured()) return;
+  await ensureSchema();
+  await query(`
+    CREATE TABLE IF NOT EXISTS admin_credentials (
+      username TEXT PRIMARY KEY,
+      password_hash TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    )
+  `);
+}
+
+export async function adminConfiguredAsync(): Promise<boolean> {
+  if (adminConfigured()) return true;
+  if (!isDatabaseConfigured()) return false;
+  try {
+    await ensureAdminCredentialsSchema();
+    const r = await query(`SELECT 1 FROM admin_credentials LIMIT 1`);
+    return Boolean(r.rowCount);
+  } catch (err) {
+    console.error("[adminAuth] config check failed:", (err as Error).message);
+    return false;
+  }
+}
+
 export function checkAdminCredentials(username: string, password: string): boolean {
   if (!adminConfigured()) return false;
   const a = crypto.createHash("sha256").update(`${username}:${password}`).digest();
@@ -85,4 +113,22 @@ export function checkAdminCredentials(username: string, password: string): boole
     .update(`${process.env.ADMIN_USERNAME}:${process.env.ADMIN_PASSWORD}`)
     .digest();
   return crypto.timingSafeEqual(a, b);
+}
+
+export async function checkAdminCredentialsAsync(username: string, password: string): Promise<boolean> {
+  if (checkAdminCredentials(username, password)) return true;
+  if (!isDatabaseConfigured()) return false;
+  try {
+    await ensureAdminCredentialsSchema();
+    const r = await query<{ password_hash: string }>(
+      `SELECT password_hash FROM admin_credentials WHERE lower(username) = lower($1) LIMIT 1`,
+      [username]
+    );
+    const hash = r.rows[0]?.password_hash;
+    if (!hash) return false;
+    return bcrypt.compare(password, hash);
+  } catch (err) {
+    console.error("[adminAuth] credential check failed:", (err as Error).message);
+    return false;
+  }
 }
