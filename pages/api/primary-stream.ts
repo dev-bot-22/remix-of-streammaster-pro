@@ -16,7 +16,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import crypto from "crypto";
 import { DEFAULT_PRIMARY_STREAM_API, getAppSettings } from "@/lib/appSettings";
 import { fetchPaidStream, manifestPlayable } from "@/lib/paidStream";
-import { extractKidFromMpd, fetchClearKeysFromPwThor } from "@/utils/drmResolver";
 import {
   SESSION_COOKIE,
   TOKEN_TTL_MS,
@@ -133,7 +132,7 @@ async function resolveOgStreamLink(
 
     for (let attempt = 0; attempt < 2; attempt++) {
       try {
-        const { ok, status, text } = await fetchOnce(apiUrl, 8000);
+        const { ok, status, text } = await fetchOnce(apiUrl, 6000);
         if (!ok) {
           if (status === 404 || status === 400) break; // wrong id — try the other one
         } else {
@@ -146,7 +145,7 @@ async function resolveOgStreamLink(
           const links = extractLinks(parsed);
           if (links.length === 0) break;
           const url = normalizeProxyLayers(links[0]);
-          if (await manifestPlayable(url)) {
+          if (await manifestPlayable(url, 5000)) {
             return { url, title: parsed?.title || parsed?.data?.title || "" };
           }
           break; // provider answered but the link is dead (CDN 403) — use signed HLS
@@ -189,11 +188,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     resolveOgStreamLink({ batchId, subjectId, lectureIds }, template),
 
     (async () => {
-      for (const id of lectureIds) {
-        const s = await fetchPaidStream({ batchId, subjectId, childId: id }, { retries: 1 });
-        if (s) return s;
-      }
-      return null;
+      // all ids in parallel, first success wins — keeps us under Heroku's 30s limit
+      const tries = lectureIds.map((id) =>
+        fetchPaidStream({ batchId, subjectId, childId: id }, { retries: 0, timeoutMs: 20000 })
+      );
+      return new Promise<Awaited<(typeof tries)[number]>>((resolve) => {
+        let left = tries.length;
+        tries.forEach((t) =>
+          t.then((s) => {
+            if (s) resolve(s);
+            else if (--left === 0) resolve(null);
+          })
+        );
+      });
     })(),
   ]);
 
@@ -206,16 +213,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(502).json(decoy());
   }
 
-  // ClearKeys for the DASH manifest (best effort — HLS does not need them).
-  let clearKeys: Record<string, string> | null = null;
-  if (paid?.mpdUrl) {
-    try {
-      const kid = await extractKidFromMpd(paid.mpdUrl);
-      if (kid) clearKeys = await fetchClearKeysFromPwThor(kid);
-    } catch {
-      /* ignore — player will report if the stream is protected */
-    }
-  }
+  // DASH keys are not fetched here: the key service is blocked and slow,
+  // and waiting on it pushed requests past Heroku's 30s timeout.
+  const clearKeys: Record<string, string> | null = null;
 
   // Seal the HLS link — the browser only ever gets an opaque token path.
   let sid = readCookie(req.headers.cookie, SESSION_COOKIE);

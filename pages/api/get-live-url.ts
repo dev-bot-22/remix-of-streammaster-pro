@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).json({ success: false, message: err?.message || "Unauthorized" });
   }
 
-  const stream = await fetchPaidStream({ batchId, subjectId, childId });
+  const stream = await fetchPaidStream({ batchId, subjectId, childId }, { timeoutMs: 22000, retries: 0 });
 
   if (!stream) {
     return res
