@@ -37,7 +37,9 @@ export async function fetchPaidStream(
   ids: { batchId: string; subjectId: string; childId: string },
   opts: { timeoutMs?: number; retries?: number } = {}
 ): Promise<PaidStream | null> {
-  const timeoutMs = opts.timeoutMs ?? 10000;
+  // The paid worker itself often takes 10-15s to answer (it fetches from PW
+  // media service first), so the default timeout must be well above that.
+  const timeoutMs = opts.timeoutMs ?? 25000;
   const retries = opts.retries ?? 2;
 
   const api = `${PAID_STREAM_API}?batchId=${encodeURIComponent(
