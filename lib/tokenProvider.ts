@@ -212,3 +212,35 @@ export async function getGlobalTokenStatus() {
     preview: cached?.accessToken ? `${cached.accessToken.slice(0, 12)}…${cached.accessToken.slice(-6)}` : null,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Auto-heal: if PW rejects the global (guest) token with 401 — e.g. StudySpark
+// rotated it — fetch a fresh token once and transparently retry the request.
+// ---------------------------------------------------------------------------
+import axios from "axios";
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __pwAxiosHealInstalled: boolean | undefined;
+}
+
+if (!global.__pwAxiosHealInstalled) {
+  global.__pwAxiosHealInstalled = true;
+  axios.interceptors.response.use(undefined, async (error: any) => {
+    const cfg = error?.config;
+    const status = error?.response?.status;
+    if (!cfg || cfg.__pwRetried || status !== 401) throw error;
+    const auth: string = String(cfg.headers?.Authorization || cfg.headers?.authorization || "");
+    const current = global.__globalToken?.accessToken;
+    if (!auth || !current || !auth.includes(current)) throw error;
+    try {
+      const fresh = await getGlobalToken(true);
+      if (!fresh?.accessToken || fresh.accessToken === current) throw error;
+      cfg.__pwRetried = true;
+      cfg.headers = { ...(cfg.headers || {}), Authorization: `Bearer ${fresh.accessToken}` };
+      return axios.request(cfg);
+    } catch {
+      throw error;
+    }
+  });
+}
