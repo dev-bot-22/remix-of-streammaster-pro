@@ -154,7 +154,7 @@ export async function fetchTokenFromSource(url: string): Promise<GlobalToken> {
 export async function getGlobalToken(forceRefresh = false): Promise<GlobalToken> {
   const settings = await getAppSettings();
 
-  if (settings.manualToken) {
+  if (settings.manualToken && !forceRefresh) {
     const manual: GlobalToken = {
       accessToken: settings.manualToken,
       refreshToken: "",
