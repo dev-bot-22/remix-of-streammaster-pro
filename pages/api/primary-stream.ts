@@ -119,9 +119,10 @@ async function fetchOnce(url: string, timeoutMs: number) {
 
 /** og-stream lookup: returns a link only when it actually plays. */
 async function resolveOgStreamLink(
-  ids: { batchId: string; subjectId: string; lectureIds: string[] }
+  ids: { batchId: string; subjectId: string; lectureIds: string[] },
+  template: string
 ): Promise<{ url: string; title: string } | null> {
-  const template = DEFAULT_PRIMARY_STREAM_API;
+
 
   for (const id of ids.lectureIds) {
     const apiUrl = fillTemplate(template, {
