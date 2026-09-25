@@ -81,9 +81,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const exp = Date.now() + TOKEN_TTL_MS;
     const base = payload.u || "";
 
+    // Resolve relative upstream links while carrying over the signed query
+    // string: CloudFront signs the whole lecture folder with one policy, and
+    // that signature lives in the master playlist's query params. Dropping it
+    // when resolving "hls/720/main.m3u8" makes every variant request 403.
     const abs = (u: string) => {
       try {
-        return new URL(u, base).toString();
+        const resolved = new URL(u, base);
+        if (!u.includes("?") && base.includes("?")) {
+          resolved.search = base.slice(base.indexOf("?") + 1);
+        }
+        return resolved.toString();
       } catch {
         return u;
       }
