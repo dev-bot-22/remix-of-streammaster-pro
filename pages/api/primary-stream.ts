@@ -170,9 +170,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json(decoy());
   }
 
-  // Stored admin settings / env on the host can point at an old provider that
-  // returns 404, so the shipped default template is used.
-  void getAppSettings;
+  // Admin panel template wins when it still carries the id placeholders.
+  let template = DEFAULT_PRIMARY_STREAM_API;
+  try {
+    const settings = await getAppSettings();
+    const custom = (settings?.primaryStreamApi || "").trim();
+    if (/^https:\/\//i.test(custom) && /\{lecture_?id\}/i.test(custom)) template = custom;
+  } catch {
+    /* settings unavailable — use the shipped default */
+  }
 
   const lectureIds = [lectureId, altLectureId].filter(
     (id, i, arr) => id && arr.indexOf(id) === i
@@ -180,7 +186,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // HLS (og-stream) and the paid worker (signed HLS fallback + DASH) in parallel
   const [og, paid] = await Promise.all([
-    resolveOgStreamLink({ batchId, subjectId, lectureIds }),
+    resolveOgStreamLink({ batchId, subjectId, lectureIds }, template),
+
     (async () => {
       for (const id of lectureIds) {
         const s = await fetchPaidStream({ batchId, subjectId, childId: id }, { retries: 1 });

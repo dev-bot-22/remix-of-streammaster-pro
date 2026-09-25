@@ -26,7 +26,7 @@ export default function LivePage() {
     }
 
     const promise = toast.promise(
-      fetch(`/api/get-live-url?batchId=${encodeURIComponent(batchId)}&childId=${encodeURIComponent(childId)}&container=HLS`)
+      fetch(`/api/get-live-url?batchId=${encodeURIComponent(batchId)}&subjectId=${encodeURIComponent(subjectId)}&childId=${encodeURIComponent(childId)}&container=HLS`)
         .then(async (res) => {
           if (!res.ok) {
             const data = await res.json().catch(() => ({}));
