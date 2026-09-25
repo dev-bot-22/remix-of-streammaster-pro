@@ -17,6 +17,7 @@ import {
   seal,
   sessionHash,
 } from "@/lib/streamVault";
+import { getGlobalToken } from "@/lib/tokenProvider";
 
 export const config = { api: { responseLimit: false } };
 
