@@ -154,7 +154,7 @@ export async function fetchTokenFromSource(url: string): Promise<GlobalToken> {
 export async function getGlobalToken(forceRefresh = false): Promise<GlobalToken> {
   const settings = await getAppSettings();
 
-  if (settings.manualToken && !forceRefresh) {
+  if (settings.manualToken && !forceRefresh && !global.__badTokens?.has(settings.manualToken)) {
     const manual: GlobalToken = {
       accessToken: settings.manualToken,
       refreshToken: "",
@@ -166,11 +166,12 @@ export async function getGlobalToken(forceRefresh = false): Promise<GlobalToken>
     if (!manual.expiresAt || isFresh(manual)) return manual;
   }
 
-  if (!forceRefresh && isFresh(global.__globalToken)) return global.__globalToken!;
+  const bad = (t?: GlobalToken | null) => !!t && !!global.__badTokens?.has(t.accessToken);
+  if (!forceRefresh && isFresh(global.__globalToken) && !bad(global.__globalToken)) return global.__globalToken!;
 
   if (!forceRefresh) {
     const cached = await readCachedToken();
-    if (isFresh(cached)) {
+    if (isFresh(cached) && !bad(cached)) {
       global.__globalToken = cached;
       return cached;
     }
@@ -222,6 +223,8 @@ import axios from "axios";
 declare global {
   // eslint-disable-next-line no-var
   var __pwAxiosHealInstalled: boolean | undefined;
+  // eslint-disable-next-line no-var
+  var __badTokens: Set<string> | undefined;
 }
 
 if (!global.__pwAxiosHealInstalled) {
@@ -231,8 +234,15 @@ if (!global.__pwAxiosHealInstalled) {
     const status = error?.response?.status;
     if (!cfg || cfg.__pwRetried || status !== 401) throw error;
     const auth: string = String(cfg.headers?.Authorization || cfg.headers?.authorization || "");
-    const current = global.__globalToken?.accessToken;
-    if (!auth || !current || !auth.includes(current)) throw error;
+    const m = auth.match(/Bearer\s+(.+)/i);
+    const current = m?.[1]?.trim();
+    if (!current) throw error;
+    const settings = await getAppSettings().catch(() => null as any);
+    const isGuestToken =
+      current === global.__globalToken?.accessToken || current === settings?.manualToken;
+    if (!isGuestToken) throw error;
+    (global.__badTokens ||= new Set()).add(current);
+    global.__globalToken = null;
     try {
       const fresh = await getGlobalToken(true);
       if (!fresh?.accessToken || fresh.accessToken === current) throw error;
